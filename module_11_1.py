@@ -1,80 +1,27 @@
-import requests
-def direction(degrees: float) -> str:
-    '''переводит азимут в розу ветров'''
-    if degrees < 23:
-        return "северный"
-    elif degrees < 68:
-        return "северо-восточный"
-    elif degrees < 113:
-        return "восточный"
-    elif degrees < 158:
-        return "юго-восточный"
-    elif degrees < 203:
-        return "южный"
-    elif degrees < 248:
-        return "юго-западный"
-    elif degrees < 293:
-        return "западный"
-    elif degrees < 338:
-        return "северо-западный"
-    else:
-        return "северный"
 
 
-def print_daily_forecast(forecast: dict, i: int):
-    print()
-    print(('Завтра:', 'Послезавтра:', 'На 3-й день:')[i])
-    print(f'Днём {forecast["temperature_2m_max"][i]}°C,',
-          f'ночью {forecast["temperature_2m_min"][i]}°C,')
-    print(f'Осадки {forecast["precipitation_sum"][i]} мм,',
-          f'с вероятностью {forecast["precipitation_probability_mean"][i]}%')
-    print('Ветер',
-          f'{direction(float(forecast["wind_direction_10m_dominant"][i]))},',
-          f'{forecast["wind_speed_10m_max"][i]} м/с')
+import numpy as np
 
+a = np.array([1, 2, 3])
+a_multiplication = a * 2  # Умножение массива на число
+print(f'a = {a}')
+print(f'a_multiplication={a_multiplication}')
+print(a.size)  # выводим кол-во элементов массива a
 
-GEO = 'https://api.ip2location.io/'
-ERR_LOC = 'Не удалось определить ваше местонахождение'
-ERR_MSG = 'Над всей Испанией безоблачное небо, a в Сантьяго идёт дождь'
+# Создаем массивы из целых случайных чисел
+b = np.random.randint(5, size=4)
+c = np.random.randint(1, 10, size=(2, 5))
 
-print('Прогноз погоды')
+print(f'b = {b}')
+print(f'c = {c}')
 
-geo_resp = requests.get(GEO)
-if not geo_resp.ok:
-    print(ERR_LOC)
-    exit(1)
-geo_json = geo_resp.json()
-country = geo_json['country_name']
-city    = geo_json['city_name']
-lat     = geo_json['latitude']
-long    = geo_json['longitude']
-tz = 'auto'
+#  Перемножаем матрицы
 
-METEO = 'https://api.open-meteo.com/v1/forecast'
+d = np.arange(1, 10).reshape(3, 3)
+print(f'd = {d}')
+x = np.dot(a, d)  # Умножаем вектор на матрицу
+y = np.dot(d, a)  # Умножаем матрицу на вектор
 
-daily = ('weather_code,'
-         'temperature_2m_max,'
-         'temperature_2m_min,'
-         'precipitation_sum,'
-         'precipitation_probability_mean,'
-         'wind_speed_10m_max,'
-         'wind_direction_10m_dominant')
+print(f'x = {x}')
 
-params = {'latitude': lat,
-          'longitude': long,
-          'wind_speed_unit': 'ms',
-          'timezone': tz,
-          'forecast_days': '3',
-          'daily': daily}
-
-meteo_resp = requests.get(METEO, params=params)
-if not meteo_resp.ok:
-    print(ERR_MSG)
-    exit(2)
-forecast = meteo_resp.json()['daily']
-print(f'{country}, {city}')
-for i in range(3):
-    print_daily_forecast(forecast, i)
-
-
-
+print(f'y = {y}')
